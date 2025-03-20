@@ -32,6 +32,9 @@ public class ThirdPersonMovement : MonoBehaviour
     private bool doubleJump;
 
     Vector3 velocity;
+    Vector3 targetPosition;
+    Vector3 refVelocity = Vector3.zero;
+    float smoothing = 0.5f;
     public float gravity = -9.81f;
 
     public Transform groundCheck;
@@ -46,10 +49,13 @@ public class ThirdPersonMovement : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+    
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        speed = 0f;
     }
 
     void OnTriggerEnter(Collider other)
@@ -61,9 +67,13 @@ public class ThirdPersonMovement : MonoBehaviour
         }
     }
 
+    
+
     // Update is called once per frame
     void Update()
     {
+        targetTime -= Time.deltaTime;
+
         velocity.y += gravity * Time.deltaTime;
 
         controller.Move(velocity * Time.deltaTime);
@@ -85,8 +95,11 @@ public class ThirdPersonMovement : MonoBehaviour
         float vertical = Input.GetAxisRaw("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
 
+        
+
         if (direction.magnitude >= 0.1f)
         {
+            
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
@@ -96,6 +109,18 @@ public class ThirdPersonMovement : MonoBehaviour
 
 
         }
+
+        if(Input.GetKey(KeyCode.W)&& isGrounded)
+        {
+            animator.SetBool("SonicIdle", false);
+            animator.SetBool("SonicRun", true);
+        }
+        else
+        {
+            animator.SetBool("SonicIdle", true);
+            animator.SetBool("SonicRun", false);
+        }
+
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -159,6 +184,22 @@ public class ThirdPersonMovement : MonoBehaviour
             }
         }
     }
+
+    /*private IEnumerator ChargeRun()
+    {
+        yield return new WaitForSeconds(2f);
+        while (Input.GetKeyDown(KeyCode.W))
+        {
+            speed += Time.deltaTime;
+            if (speed < 110f)
+            {
+                speed = 110f;
+            }
+            
+        }
+
+
+    }*/
 
     private IEnumerator RechargeStamina()
     {
