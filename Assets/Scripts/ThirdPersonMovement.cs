@@ -46,7 +46,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
+        //animator = GetComponent<Animator>();
     }
 
     
@@ -56,6 +56,7 @@ public class ThirdPersonMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         speed = 0f;
+        animator = GetComponent<Animator>();
     }
 
     void OnTriggerEnter(Collider other)
@@ -106,33 +107,41 @@ public class ThirdPersonMovement : MonoBehaviour
 
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             controller.Move(moveDir.normalized * speed * Time.deltaTime);
-
-
-        }
-
-        if(Input.GetKey(KeyCode.W)&& isGrounded)
-        {
-            animator.SetBool("SonicIdle", false);
             animator.SetBool("SonicRun", true);
+
         }
         else
         {
-            animator.SetBool("SonicIdle", true);
             animator.SetBool("SonicRun", false);
         }
 
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if(!isGrounded)
         {
+            animator.SetBool("SonicFall" , true);
+        }
+        else
+        {
+            animator.SetBool("SonicFall", false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space)|| Input.GetButtonDown("Jump"))
+        {
+            
             if ((isGrounded) || doubleJump)
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
                 doubleJump = !doubleJump;
             }
+            
         }
 
-        if (Input.GetKey(KeyCode.LeftShift) && Stamina > 0)
+        if(Input.GetKeyDown(KeyCode.Space)|| Input.GetButtonDown("Fire1")&& isGrounded )
+        {
+            animator.SetTrigger("SonicJump");
+        } 
+
+        if (Input.GetKey(KeyCode.LeftShift)|| Input.GetButton("Fire3") && Stamina > 0 && direction.magnitude >= 0.1f)
         {
             speed = 125f;
             gravity = -40f;
@@ -159,7 +168,7 @@ public class ThirdPersonMovement : MonoBehaviour
             controller.height = 5.44f;
         }
 
-        if (Input.GetKey(KeyCode.LeftControl) && !isGrounded)
+        if (Input.GetKey(KeyCode.LeftControl)|| Input.GetButton("Jump") && !isGrounded)
         {
             speed = 0f;
             gravity = -500f;
@@ -183,7 +192,12 @@ public class ThirdPersonMovement : MonoBehaviour
                 speed = 0f;
             }
         }
+
+        
     }
+
+
+
 
     /*private IEnumerator ChargeRun()
     {
