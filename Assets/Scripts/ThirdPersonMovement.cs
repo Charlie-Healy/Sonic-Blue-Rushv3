@@ -41,6 +41,7 @@ public class ThirdPersonMovement : MonoBehaviour
     public float groundDistance = 0.4f;
     public LayerMask groundMask;
     public bool isGrounded;
+    public bool stomp = false;
 
     public float targetTime = 2f;
 
@@ -136,7 +137,7 @@ public class ThirdPersonMovement : MonoBehaviour
             
         }
 
-        if(Input.GetKeyDown(KeyCode.Space)|| Input.GetButtonDown("Fire1")&& isGrounded )
+        if(Input.GetKeyDown(KeyCode.Space)|| Input.GetButtonDown("Jump")&& isGrounded )
         {
             animator.SetTrigger("SonicJump");
         } 
@@ -144,18 +145,25 @@ public class ThirdPersonMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift)|| Input.GetButton("Fire3") && Stamina > 0 && direction.magnitude >= 0.1f)
         {
             speed = 125f;
-            gravity = -40f;
+            gravity = -50f;
             Stamina -= RunCost * Time.deltaTime;
             if (Stamina < 0) Stamina = 0;
             if (Stamina > MaxStamina) Stamina = MaxStamina;
             StaminaBar.fillAmount = Stamina / MaxStamina;
             //if (recharge != null) StopCoroutine(recharge);
             //recharge = StartCoroutine(RechargeStamina());
+            animator.SetBool("SonicBoost", true);
         }
         else
         {
             speed = 80f;
-            gravity = -20f;
+            gravity = -40f;
+            animator.SetBool("SonicBoost", false);
+        }
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            Stamina = 100;
+            StaminaBar.fillAmount = Stamina;
         }
 
         if (Input.GetKey(KeyCode.C))
@@ -168,10 +176,26 @@ public class ThirdPersonMovement : MonoBehaviour
             controller.height = 5.44f;
         }
 
-        if (Input.GetKey(KeyCode.LeftControl)|| Input.GetButton("Jump") && !isGrounded)
+        if (Input.GetKeyDown(KeyCode.LeftControl)|| Input.GetButton("Fire2") && !isGrounded)
+        {
+            stomp = true;
+            
+        }
+        else if (isGrounded)
+        {
+            stomp = false;
+            gravity = -40f;
+            
+        }
+        if(stomp == true)
         {
             speed = 0f;
             gravity = -500f;
+            animator.SetBool("SonicStomp", true);
+        }
+        else
+        {
+            animator.SetBool("SonicStomp", false);
         }
 
         if (Input.GetKeyDown(KeyCode.Z) && isGrounded)
