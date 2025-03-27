@@ -198,23 +198,20 @@ public class ThirdPersonMovement : MonoBehaviour
             animator.SetBool("SonicStomp", false);
         }
 
-        if (Input.GetKeyDown(KeyCode.Z) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Z)|| Input.GetButtonDown("Fire1") && isGrounded)
         {
             speed = 0f;
 
-            if (Input.GetKeyUp(KeyCode.Z) && SpinDashCounter > 0 && isGrounded)
+            if (Input.GetKeyUp(KeyCode.Z)|| Input.GetButtonUp("Fire1") && isGrounded)
             {
-                SpinDashTime = 5f;
-                SpinDashCounter = SpinDashCounter - 1;
+                speed = 80f;
+                animator.SetBool("SpinDash", true);
             }
-            if (SpinDashTime > 0f)
+            else
             {
-                speed = 135;
+                animator.SetBool("SpinDash", false);
             }
-            else if (SpinDashTime < 0)
-            {
-                speed = 0f;
-            }
+               
         }
 
         
