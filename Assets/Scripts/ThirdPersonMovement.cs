@@ -9,6 +9,15 @@ public class ThirdPersonMovement : MonoBehaviour
 {
     public Animator animator;
 
+    public AudioClip jumpClip;
+    public AudioClip ringClip;
+    public AudioClip runClip;
+    public AudioClip startBoostClip;
+    public AudioClip holdBoostClip;
+    public AudioSource source;
+    public AudioSource boostSound;
+    public AudioSource stepSound;
+
     public Image StaminaBar;
     public float Stamina, MaxStamina;
     public float RunCost;
@@ -48,9 +57,13 @@ public class ThirdPersonMovement : MonoBehaviour
     private void Awake()
     {
         //animator = GetComponent<Animator>();
+        stepSound.loop = false;
+        stepSound.playOnAwake = false;
+        boostSound.loop = false;
+        boostSound.playOnAwake = false;
     }
 
-    
+
 
     void Start()
     {
@@ -66,10 +79,11 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             StaminaBar.fillAmount += 0.05f;
             Stamina += 5f;
+            source.PlayOneShot(ringClip);
         }
     }
 
-    
+
 
     // Update is called once per frame
     void Update()
@@ -97,11 +111,11 @@ public class ThirdPersonMovement : MonoBehaviour
         float vertical = Input.GetAxisRaw("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
 
-        
+
 
         if (direction.magnitude >= 0.1f)
         {
-            
+
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
@@ -109,40 +123,45 @@ public class ThirdPersonMovement : MonoBehaviour
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             controller.Move(moveDir.normalized * speed * Time.deltaTime);
             animator.SetBool("SonicRun", true);
+            source.PlayOneShot(runClip);
 
         }
         else
         {
             animator.SetBool("SonicRun", false);
+            //Audio.runClip = false;
         }
 
-        if(!isGrounded)
+        if (!isGrounded)
         {
-            animator.SetBool("SonicFall" , true);
+            animator.SetBool("SonicFall", true);
         }
         else
         {
             animator.SetBool("SonicFall", false);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space)|| Input.GetButtonDown("Jump"))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump"))
         {
-            
+
             if ((isGrounded) || doubleJump)
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
                 doubleJump = !doubleJump;
             }
-            
+
         }
 
-        if(Input.GetKeyDown(KeyCode.Space)|| Input.GetButtonDown("Jump")&& isGrounded )
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump") && isGrounded)
         {
             animator.SetTrigger("SonicJump");
-        } 
+            source.PlayOneShot(jumpClip);
+        }
 
-        if (Input.GetKey(KeyCode.LeftShift)|| Input.GetButton("Fire3") && Stamina > 0 && direction.magnitude >= 0.1f)
+        
+
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetButton("Fire3") && Stamina > 0 && direction.magnitude >= 0.1f)
         {
             speed = 125f;
             gravity = -50f;
@@ -153,6 +172,7 @@ public class ThirdPersonMovement : MonoBehaviour
             //if (recharge != null) StopCoroutine(recharge);
             //recharge = StartCoroutine(RechargeStamina());
             animator.SetBool("SonicBoost", true);
+            
         }
         else
         {
@@ -176,18 +196,18 @@ public class ThirdPersonMovement : MonoBehaviour
             controller.height = 5.44f;
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftControl)|| Input.GetButton("Fire2") && !isGrounded)
+        if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetButton("Fire2") && !isGrounded)
         {
             stomp = true;
-            
+
         }
         else if (isGrounded)
         {
             stomp = false;
             gravity = -40f;
-            
+
         }
-        if(stomp == true)
+        if (stomp == true)
         {
             speed = 0f;
             gravity = -500f;
@@ -198,11 +218,11 @@ public class ThirdPersonMovement : MonoBehaviour
             animator.SetBool("SonicStomp", false);
         }
 
-        if (Input.GetKeyDown(KeyCode.Z)|| Input.GetButtonDown("Fire1") && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Fire1") && isGrounded)
         {
             speed = 0f;
 
-            if (Input.GetKeyUp(KeyCode.Z)|| Input.GetButtonUp("Fire1") && isGrounded)
+            if (Input.GetKeyUp(KeyCode.Z) || Input.GetButtonUp("Fire1") && isGrounded)
             {
                 speed = 80f;
                 animator.SetBool("SpinDash", true);
@@ -211,13 +231,21 @@ public class ThirdPersonMovement : MonoBehaviour
             {
                 animator.SetBool("SpinDash", false);
             }
-               
+
         }
 
-        
+
     }
 
+    public void PlayStepSound()
+    {
+        stepSound.Play();
+    }
 
+    public void PlayBoostSound()
+    {
+        boostSound.Play();
+    }
 
 
     /*private IEnumerator ChargeRun()
@@ -252,3 +280,5 @@ public class ThirdPersonMovement : MonoBehaviour
         }
     }
 }
+
+    

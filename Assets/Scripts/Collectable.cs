@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class Collectable : MonoBehaviour
 {
-
+    public AudioSource source;
+    public AudioClip clip;
     public int value;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,8 +22,10 @@ public class Collectable : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            source.PlayOneShot(clip);
             Destroy(gameObject);
             RingCollecter.instance.IncreaseRings(value);
+            
         }
     }
 }
