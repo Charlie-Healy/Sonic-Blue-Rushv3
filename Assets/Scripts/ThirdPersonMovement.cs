@@ -17,6 +17,7 @@ public class ThirdPersonMovement : MonoBehaviour
     public AudioSource source;
     public AudioSource boostSound;
     public AudioSource stepSound;
+    //public AudioSource ringSound;
 
     public Image StaminaBar;
     public float Stamina, MaxStamina;
@@ -149,6 +150,7 @@ public class ThirdPersonMovement : MonoBehaviour
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
                 doubleJump = !doubleJump;
+                animator.SetBool("DoubleJump", true);
             }
 
         }
