@@ -82,6 +82,11 @@ public class ThirdPersonMovement : MonoBehaviour
             Stamina += 5f;
             source.PlayOneShot(ringClip);
         }
+
+        while (other.gameObject.CompareTag("Slope"))
+        {
+            gravity = -500;
+        }
     }
 
 
@@ -150,10 +155,25 @@ public class ThirdPersonMovement : MonoBehaviour
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
                 doubleJump = !doubleJump;
-                animator.SetBool("DoubleJump", true);
+                
             }
+            
+            
 
         }
+
+        
+
+        if(Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump") && !isGrounded)
+        {
+            animator.SetTrigger("DoubleJump");
+        }
+        else if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump") && !isGrounded)
+        {
+            animator.SetBool("SonicFall", true);
+        }
+        
+        
 
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump") && isGrounded)
         {
