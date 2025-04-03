@@ -9,6 +9,8 @@ public class ThirdPersonMovement : MonoBehaviour
 {
     public Animator animator;
 
+    public float attackSpeed;
+
     public AudioClip jumpClip;
     public AudioClip ringClip;
     public AudioClip runClip;
@@ -154,13 +156,15 @@ public class ThirdPersonMovement : MonoBehaviour
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
-                doubleJump = !doubleJump;
+                //doubleJump = !doubleJump;
                 
             }
             
             
 
         }
+        
+        
 
         
 
