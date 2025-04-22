@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerPhysics : MonoBehaviour
@@ -6,7 +7,7 @@ public class PlayerPhysics : MonoBehaviour
 
     public LayerMask layermask;
 
-    bool ground;
+    
 
     public Vector3 horizontalVelocity => Vector3.ProjectOnPlane(rb.linearVelocity, rb.transform.up);
 
@@ -31,14 +32,21 @@ public class PlayerPhysics : MonoBehaviour
 
     void FixedUpdate()
     {
-        Ground();
-
-        Snap();
+        
 
         Move();        
 
         if (!ground)        
-            Gravity();        
+            Gravity();
+
+        StartCoroutine(LateFixedUpdateRoutine());
+
+        IEnumerator LateFixedUpdateRoutine()
+        {
+            yield return new WaitForFixedUpdate();
+
+            LateFixedUpdate();
+        }
     }
 
     [SerializeField] float speed;
@@ -56,18 +64,39 @@ public class PlayerPhysics : MonoBehaviour
         rb.linearVelocity -= Vector3.up * gravity * Time.deltaTime;
     }
 
+    void LateFixedUpdate()
+    {
+        Ground();
+        Snap();
+    }
+
     [SerializeField] float groundDistance;
 
+    Vector3 point;
+
     Vector3 normal;
+
+    bool ground;
 
     void Ground()
     {
         ground = Physics.Raycast(rb.worldCenterOfMass, -rb.transform.up, out RaycastHit hit, groundDistance, layermask, QueryTriggerInteraction.Ignore);
+        
+        point = ground ? hit.point : rb.transform.position;
+
         normal = ground ? hit.normal : Vector3.up;
     }
 
     void Snap()
     {
-        transform.up = normal;
+        rb.transform.up = normal;
+
+        Vector3 goal = point;
+
+        Vector3 difference = goal - rb.transform.position;
+
+        if (rb.SweepTest(difference, out _, difference.magnitude, QueryTriggerInteraction.Ignore)) return;
+
+        rb.transform.position = goal;
     }
 }
