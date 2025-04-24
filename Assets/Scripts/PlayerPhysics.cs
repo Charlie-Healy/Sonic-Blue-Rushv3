@@ -39,6 +39,9 @@ public class PlayerPhysics : MonoBehaviour
         if (!ground)        
             Gravity();
 
+        
+
+
         StartCoroutine(LateFixedUpdateRoutine());
 
         IEnumerator LateFixedUpdateRoutine()
@@ -53,8 +56,13 @@ public class PlayerPhysics : MonoBehaviour
 
     void Move()
     {
+       
+
+
         rb.linearVelocity = (Vector3.right * Input.GetAxis("Horizontal") * speed) + (Vector3.forward * Input.GetAxis("Vertical") * speed)
             + verticalVelocity;
+
+        
     }
 
     [SerializeField] float gravity;
@@ -67,6 +75,8 @@ public class PlayerPhysics : MonoBehaviour
     void LateFixedUpdate()
     {
         Ground();
+
+
         Snap();
     }
 
@@ -80,7 +90,12 @@ public class PlayerPhysics : MonoBehaviour
 
     void Ground()
     {
+        float maxDistance = Mathf.Max(rb.centerOfMass.y, 0) + (rb.sleepThreshold * Time.fixedDeltaTime);
+
         ground = Physics.Raycast(rb.worldCenterOfMass, -rb.transform.up, out RaycastHit hit, groundDistance, layermask, QueryTriggerInteraction.Ignore);
+
+        if (ground)
+            maxDistance += groundDistance;
         
         point = ground ? hit.point : rb.transform.position;
 
