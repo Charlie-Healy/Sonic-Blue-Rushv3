@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using UnityEngine;
+
 
 public class PlayerPhysics : MonoBehaviour
 {
@@ -13,33 +15,25 @@ public class PlayerPhysics : MonoBehaviour
 
     public Vector3 verticalVelocity => Vector3.Project(rb.linearVelocity, rb.transform.up);
 
-    void Update()
-    {
-        if (Input.GetButtonDown("Jump"))
-            Jump();
-        
-    }
+    public float verticalSpeed => Vector3.Dot(rb.linearVelocity, rb.transform.up);
 
-    [SerializeField] float jumpForce;
+    public float speed => horizontalVelocity.magnitude;
 
-    void Jump()
-    {
-        if (!ground) return;
+    public Action onPlayerPhysicsUpdate;
 
-        rb.linearVelocity = (Vector3.up * jumpForce)
-            + horizontalVelocity;
-    }
+    
 
     void FixedUpdate()
     {
         
+        onPlayerPhysicsUpdate?.Invoke();
+             
 
-        Move();        
-
-        if (!ground)        
+        if (!groundInfo.ground)        
             Gravity();
 
-        
+        if (groundInfo.ground && verticalSpeed < rb.sleepThreshold)
+            rb.linearVelocity = horizontalVelocity;
 
 
         StartCoroutine(LateFixedUpdateRoutine());
@@ -52,18 +46,7 @@ public class PlayerPhysics : MonoBehaviour
         }
     }
 
-    [SerializeField] float speed;
-
-    void Move()
-    {
-       
-
-
-        rb.linearVelocity = (Vector3.right * Input.GetAxis("Horizontal") * speed) + (Vector3.forward * Input.GetAxis("Vertical") * speed)
-            + verticalVelocity;
-
-        
-    }
+   
 
     [SerializeField] float gravity;
 
@@ -78,40 +61,69 @@ public class PlayerPhysics : MonoBehaviour
 
 
         Snap();
+
+        if (groundInfo.ground)
+            rb.linearVelocity = horizontalVelocity;
     }
 
     [SerializeField] float groundDistance;
 
-    Vector3 point;
+    public struct GroundInfo
+    {
+        public Vector3 point;
 
-    Vector3 normal;
+        public Vector3 normal;
 
-    bool ground;
+        public bool ground;
+    }
+
+    [HideInInspector] public GroundInfo groundInfo;
+
+    public Action onGroundEnter;
+
+    public Action onGroundExit;
 
     void Ground()
     {
         float maxDistance = Mathf.Max(rb.centerOfMass.y, 0) + (rb.sleepThreshold * Time.fixedDeltaTime);
 
-        ground = Physics.Raycast(rb.worldCenterOfMass, -rb.transform.up, out RaycastHit hit, groundDistance, layermask, QueryTriggerInteraction.Ignore);
+        bool ground = Physics.Raycast(rb.worldCenterOfMass, -rb.transform.up, out RaycastHit hit, groundDistance, layermask, QueryTriggerInteraction.Ignore);
 
-        if (ground)
+        if (ground && verticalSpeed < rb.sleepThreshold)
             maxDistance += groundDistance;
         
-        point = ground ? hit.point : rb.transform.position;
+       Vector3 point = ground ? hit.point : rb.transform.position;
 
-        normal = ground ? hit.normal : Vector3.up;
+       Vector3 normal = ground ? hit.normal : Vector3.up;
+
+        if (ground != groundInfo.ground)
+        {
+            if (ground)
+                onGroundEnter?.Invoke();
+            else
+                onGroundExit?.Invoke();
+        }
+
+        groundInfo = new()
+        {
+            point = point,
+            normal = normal,
+            ground = ground,
+        };
     }
 
     void Snap()
     {
-        rb.transform.up = normal;
+        rb.transform.up = groundInfo.normal;
 
-        Vector3 goal = point;
+        Vector3 goal = groundInfo.point;
 
-        Vector3 difference = goal - rb.transform.position;
+        Vector3 newPosition = new Vector3(goal.x, goal.y, rb.transform.position.z);
+
+        Vector3 difference = newPosition - rb.transform.position;
 
         if (rb.SweepTest(difference, out _, difference.magnitude, QueryTriggerInteraction.Ignore)) return;
 
-        rb.transform.position = goal;
+        rb.transform.position = newPosition;    // Only modify X and Y
     }
 }
