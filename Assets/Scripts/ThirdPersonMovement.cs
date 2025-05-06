@@ -83,15 +83,22 @@ public class ThirdPersonMovement : MonoBehaviour
             StaminaBar.fillAmount += 0.05f;
             Stamina += 5f;
             source.PlayOneShot(ringClip);
+            
         }
 
-        while (other.gameObject.CompareTag("Slope"))
+        if (other.gameObject.CompareTag("Slope"))
         {
-            gravity = -500;
+            gravity = -5000;
+            animator.SetBool("SonicRun", true);
+            print("Colliding");
+        }
+        else if (other.gameObject.CompareTag("Reset"))
+        {
+            gravity = -40;
         }
     }
 
-
+    
 
     // Update is called once per frame
     void Update()
@@ -156,7 +163,7 @@ public class ThirdPersonMovement : MonoBehaviour
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
-                //doubleJump = !doubleJump;
+                doubleJump = !doubleJump;
                 
             }
             
@@ -190,7 +197,7 @@ public class ThirdPersonMovement : MonoBehaviour
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetButton("Fire3") && Stamina > 0 && direction.magnitude >= 0.1f)
         {
             speed = 125f;
-            gravity = -50f;
+            //gravity = -50f;
             Stamina -= RunCost * Time.deltaTime;
             if (Stamina < 0) Stamina = 0;
             if (Stamina > MaxStamina) Stamina = MaxStamina;
@@ -203,7 +210,7 @@ public class ThirdPersonMovement : MonoBehaviour
         else
         {
             speed = 80f;
-            gravity = -40f;
+            //gravity = -40f;
             animator.SetBool("SonicBoost", false);
         }
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -212,7 +219,7 @@ public class ThirdPersonMovement : MonoBehaviour
             StaminaBar.fillAmount = Stamina;
         }
 
-        if (Input.GetKey(KeyCode.C))
+        /*if (Input.GetKey(KeyCode.C))
         {
             controller.height = 2.5f;
             targetTime = 3f;
@@ -230,18 +237,27 @@ public class ThirdPersonMovement : MonoBehaviour
         else if (isGrounded)
         {
             stomp = false;
-            gravity = -40f;
+            //gravity = -40f;
 
         }
         if (stomp == true)
         {
             speed = 0f;
-            gravity = -500f;
+            //gravity = -500f;
             animator.SetBool("SonicStomp", true);
         }
         else
         {
             animator.SetBool("SonicStomp", false);
+        }*/
+
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetButton("Fire2") && isGrounded)
+        {
+            animator.SetBool("SonicRoll", true);
+        }
+        else
+        {
+            animator.SetBool("SonicRoll", false);
         }
 
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Fire1") && isGrounded)
@@ -260,8 +276,12 @@ public class ThirdPersonMovement : MonoBehaviour
 
         }
 
+        
+
 
     }
+
+    
 
     public void PlayStepSound()
     {
