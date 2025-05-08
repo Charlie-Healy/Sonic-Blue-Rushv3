@@ -88,7 +88,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
         if (other.gameObject.CompareTag("Slope"))
         {
-            gravity = -5000;
+            gravity = -500000;
             animator.SetBool("SonicRun", true);
             print("Colliding");
         }
@@ -192,6 +192,12 @@ public class ThirdPersonMovement : MonoBehaviour
             source.PlayOneShot(jumpClip);
         }
 
+
+        
+        /*if(Input.GetButtonDown("Fire2") && !isGrounded)
+        {
+            direction.magnitude += 0.1f;
+        }*/
         
 
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetButton("Fire3") && Stamina > 0 && direction.magnitude >= 0.1f)
@@ -205,7 +211,7 @@ public class ThirdPersonMovement : MonoBehaviour
             //if (recharge != null) StopCoroutine(recharge);
             //recharge = StartCoroutine(RechargeStamina());
             animator.SetBool("SonicBoost", true);
-            
+
         }
         else
         {
