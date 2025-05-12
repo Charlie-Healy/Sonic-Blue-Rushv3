@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using static Unity.VisualScripting.Member;
 
 public class RingCollecter : MonoBehaviour
 {
@@ -25,9 +26,26 @@ public class RingCollecter : MonoBehaviour
         ringText.text = "" + currentRings.ToString();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void DecreaseRings(int v)
     {
-        
+        currentRings -= v;
+        ringText.text = "0";
+        currentRings = 0;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            currentRings = 0;
+            //ringText.text = ;
+
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
     }
 }

@@ -4,9 +4,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
+    RingCollecter ringCollecter;
+    public int value;
+
     public Animator animator;
 
     public float attackSpeed;
@@ -42,6 +46,9 @@ public class ThirdPersonMovement : MonoBehaviour
     private int numberOfJumps;
     [SerializeField] private int maxNumberOfJumps = 2;
     private bool doubleJump;
+
+    public bool isAttacking;
+    public bool hasRings;
 
     Vector3 velocity;
     Vector3 targetPosition;
@@ -83,7 +90,9 @@ public class ThirdPersonMovement : MonoBehaviour
             StaminaBar.fillAmount += 0.05f;
             Stamina += 5f;
             source.PlayOneShot(ringClip);
-            
+            hasRings = true;
+
+
         }
 
         if (other.gameObject.CompareTag("Slope"))
@@ -95,6 +104,27 @@ public class ThirdPersonMovement : MonoBehaviour
         else if (other.gameObject.CompareTag("Reset"))
         {
             gravity = -40;
+        }
+
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            if (isAttacking)
+            {
+                Destroy(other.gameObject);
+            }
+            else if (!isAttacking && hasRings == true)
+            {
+                hasRings = false;
+                RingCollecter.instance.DecreaseRings(value);
+            }
+            else if (!isAttacking && hasRings == false)
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+            if(isAttacking && !isGrounded)
+            {
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            }
         }
     }
 
@@ -260,11 +290,24 @@ public class ThirdPersonMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetButton("Fire2") && isGrounded)
         {
             animator.SetBool("SonicRoll", true);
+            isAttacking = true;
         }
         else
         {
             animator.SetBool("SonicRoll", false);
+            isAttacking = false;
         }
+
+        if(!isGrounded || Input.GetKey(KeyCode.LeftControl) || Input.GetButton("Fire2"))
+        {
+            isAttacking = true;
+        }
+        else
+        {
+            isAttacking = false;
+        }
+
+        
 
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetButtonDown("Fire1") && isGrounded)
         {
@@ -281,6 +324,8 @@ public class ThirdPersonMovement : MonoBehaviour
             }
 
         }
+
+        
 
         
 

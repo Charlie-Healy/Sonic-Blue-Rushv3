@@ -29,7 +29,7 @@ public class EnemyScript : MonoBehaviour
 
     private void Awake()
     {
-        player = GameObject.Find("PlayerObj").transform;
+        player = GameObject.Find("Third Person Player").transform;
         agent = GetComponent<NavMeshAgent>();
     }
 
