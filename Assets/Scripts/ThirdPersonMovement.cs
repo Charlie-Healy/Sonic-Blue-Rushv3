@@ -232,7 +232,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetButton("Fire3") && Stamina > 0 && direction.magnitude >= 0.1f)
         {
-            speed = 125f;
+            speed = 250f;
             //gravity = -50f;
             Stamina -= RunCost * Time.deltaTime;
             if (Stamina < 0) Stamina = 0;
@@ -245,7 +245,7 @@ public class ThirdPersonMovement : MonoBehaviour
         }
         else
         {
-            speed = 80f;
+            speed = 175f;
             //gravity = -40f;
             animator.SetBool("SonicBoost", false);
         }
