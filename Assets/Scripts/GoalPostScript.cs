@@ -9,6 +9,7 @@ public class GoalPostScript : MonoBehaviour
             if (col.gameObject.CompareTag("Player"))
             {
                 SceneManager.LoadScene("MainMenu");
+            Cursor.lockState = CursorLockMode.None;
             }
     }
 }

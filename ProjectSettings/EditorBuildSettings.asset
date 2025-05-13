@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 4f27683799651fe4d981cefc208cdc9e
   - enabled: 1
+    path: Assets/Scenes/Green Hill Act 1.unity
+    guid: 80cd58cc53fbecc4fb0f38ec45f72658
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
