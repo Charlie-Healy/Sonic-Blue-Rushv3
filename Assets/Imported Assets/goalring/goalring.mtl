@@ -1,0 +1,50 @@
+# Blender MTL File: 'goal ring sa2.blend'
+# Material Count: 4
+
+newmtl cmn_metal_ms_ring_dif
+Ns 1000.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd cmn_metal_ms_ring_dif.png
+refl -o 1.000000 0.000000 0.000000 cmn_metal_ms_ringsky2_ref.png
+
+newmtl off
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd goaloff.png
+
+newmtl on
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd goal.png
+map_Ke  goal.png
+
+newmtl screen
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd sa2plating.png
+map_Bump  sa2plating-norm.png
+map_Ks  sa2plating-spec.png
