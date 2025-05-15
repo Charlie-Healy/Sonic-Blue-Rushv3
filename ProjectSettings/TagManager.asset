@@ -8,6 +8,7 @@ TagManager:
   - Slope
   - Reset
   - Enemy
+  - Death
   layers:
   - Default
   - TransparentFX

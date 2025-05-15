@@ -18,11 +18,10 @@ public class ThirdPersonMovement : MonoBehaviour
     public AudioClip jumpClip;
     public AudioClip ringClip;
     public AudioClip runClip;
-    public AudioClip startBoostClip;
-    public AudioClip holdBoostClip;
+    public AudioClip windClip;
     public AudioSource source;
-    public AudioSource boostSound;
     public AudioSource stepSound;
+    public AudioSource windSound;
     //public AudioSource ringSound;
 
     public Image StaminaBar;
@@ -69,8 +68,6 @@ public class ThirdPersonMovement : MonoBehaviour
         //animator = GetComponent<Animator>();
         stepSound.loop = false;
         stepSound.playOnAwake = false;
-        boostSound.loop = false;
-        boostSound.playOnAwake = false;
     }
 
 
@@ -91,6 +88,13 @@ public class ThirdPersonMovement : MonoBehaviour
             Stamina += 5f;
             source.PlayOneShot(ringClip);
             hasRings = true;
+
+
+        }
+
+        if (other.gameObject.CompareTag("Death"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
 
         }
@@ -168,7 +172,7 @@ public class ThirdPersonMovement : MonoBehaviour
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             controller.Move(moveDir.normalized * speed * Time.deltaTime);
             animator.SetBool("SonicRun", true);
-            source.PlayOneShot(runClip);
+            //source.PlayOneShot(runClip);
 
         }
         else
@@ -180,10 +184,21 @@ public class ThirdPersonMovement : MonoBehaviour
         if (!isGrounded)
         {
             animator.SetBool("SonicFall", true);
+            //windSound.PlayOneShot(windClip);
         }
         else
         {
             animator.SetBool("SonicFall", false);
+            
+        }
+
+        if(isGrounded && direction.magnitude < 0)
+        {
+            stepSound.Play();
+        }
+        else
+        {
+            
         }
 
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump"))
@@ -194,10 +209,10 @@ public class ThirdPersonMovement : MonoBehaviour
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
                 doubleJump = !doubleJump;
-                
+
             }
-            
-            
+
+
 
         }
         
@@ -241,6 +256,10 @@ public class ThirdPersonMovement : MonoBehaviour
             //if (recharge != null) StopCoroutine(recharge);
             //recharge = StartCoroutine(RechargeStamina());
             animator.SetBool("SonicBoost", true);
+                       
+            //windSound.loop = true;
+            //windSound.Play();
+            
 
         }
         else
@@ -248,8 +267,22 @@ public class ThirdPersonMovement : MonoBehaviour
             speed = 175f;
             //gravity = -40f;
             animator.SetBool("SonicBoost", false);
+            //stepSound.loop = false;
+            //windSound.loop = false;
+           // windSound.Stop();
         }
-        if (Input.GetKeyDown(KeyCode.Tab))
+
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetButtonDown("Fire3") && Stamina > 0 )
+        {
+            windSound.Play();
+            stepSound.Play();
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetButtonUp("Fire3") && Stamina > 0 || Stamina <= 0 )
+        {
+            windSound.Stop();
+            stepSound.Stop();
+        }
+            if (Input.GetKeyDown(KeyCode.Tab))
         {
             Stamina = 100;
             StaminaBar.fillAmount = Stamina;
@@ -334,15 +367,15 @@ public class ThirdPersonMovement : MonoBehaviour
 
     
 
+    
+
+    
+
     public void PlayStepSound()
     {
         stepSound.Play();
     }
 
-    public void PlayBoostSound()
-    {
-        boostSound.Play();
-    }
 
 
     /*private IEnumerator ChargeRun()
