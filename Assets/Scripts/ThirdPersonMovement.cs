@@ -22,6 +22,9 @@ public class ThirdPersonMovement : MonoBehaviour
     public AudioSource source;
     public AudioSource stepSound;
     public AudioSource windSound;
+    public AudioSource StartBoostSound;
+    public AudioSource HoldBoostSound;
+    public AudioSource SonicWooSound;
     //public AudioSource ringSound;
 
     public Image StaminaBar;
@@ -74,8 +77,8 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
         speed = 0f;
         animator = GetComponent<Animator>();
     }
@@ -90,6 +93,13 @@ public class ThirdPersonMovement : MonoBehaviour
             hasRings = true;
 
 
+        }
+        if (other.gameObject.CompareTag("BigRing"))
+        {
+            StaminaBar.fillAmount += 0.3f;
+            Stamina += 30f;
+            source.PlayOneShot(ringClip);
+            hasRings = true;
         }
 
         if (other.gameObject.CompareTag("Death"))
@@ -276,11 +286,15 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             windSound.Play();
             stepSound.Play();
+            SonicWooSound.Play();
+            StartBoostSound.Play();
+            HoldBoostSound.Play();
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetButtonUp("Fire3") && Stamina > 0 || Stamina <= 0 )
         {
             windSound.Stop();
             stepSound.Stop();
+            HoldBoostSound.Stop();
         }
             if (Input.GetKeyDown(KeyCode.Tab))
         {
