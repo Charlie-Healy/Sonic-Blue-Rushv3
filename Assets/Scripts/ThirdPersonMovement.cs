@@ -25,6 +25,7 @@ public class ThirdPersonMovement : MonoBehaviour
     public AudioSource StartBoostSound;
     public AudioSource HoldBoostSound;
     public AudioSource SonicWooSound;
+    public AudioSource SonicSpinSound;
     //public AudioSource ringSound;
 
     public Image StaminaBar;
@@ -343,6 +344,11 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             animator.SetBool("SonicRoll", false);
             isAttacking = false;
+        }
+
+        if(Input.GetKeyDown(KeyCode.LeftControl) || Input.GetButtonDown("Fire2") && isGrounded)
+        {
+            SonicSpinSound.Play();
         }
 
         if(!isGrounded || Input.GetKey(KeyCode.LeftControl) || Input.GetButton("Fire2"))
