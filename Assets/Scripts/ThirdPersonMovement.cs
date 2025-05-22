@@ -233,7 +233,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump") && !isGrounded)
         {
-            animator.SetTrigger("DoubleJump");
+            //animator.SetTrigger("SonicDoubleJump");
         }
         else if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Jump") && !isGrounded)
         {
